@@ -30,6 +30,7 @@ async function dbConnect() {
 dbConnect();
 
 const Service = client.db("healthcoach").collection("services");
+const Review = client.db("healthcoach").collection("reviews");
 
 // all services
 
@@ -51,6 +52,23 @@ app.get("/services", async (req, res) => {
   }
 });
 
+app.post("/services", async (req, res) => {
+  try {
+    const services = req.body;
+    const service = await Service.insertOne(services);
+    res.send({
+      success: true,
+      message: "Successfully Review",
+      data: service,
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
 // single Service
 
 app.get("/service/:id", async (req, res) => {
@@ -62,6 +80,48 @@ app.get("/service/:id", async (req, res) => {
       success: true,
       message: "Successfully get the data",
       data: service,
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+// review get all data
+app.get("/reviews", async (req, res) => {
+  try {
+    let query = {};
+    if (req.query.email) {
+      query = {
+        email: req.query.email,
+      };
+    }
+    const cursor = Review.find(query);
+    const reviews = await cursor.toArray();
+
+    res.send({
+      success: true,
+      message: "Successfully get the Data",
+      data: reviews,
+    });
+  } catch (error) {
+    res.send({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+// Reviews create
+app.post("/reviews", async (req, res) => {
+  try {
+    const reviews = req.body;
+    const review = await Review.insertOne(reviews);
+    res.send({
+      success: true,
+      message: "Successfully Review",
+      data: review,
     });
   } catch (error) {
     res.send({
