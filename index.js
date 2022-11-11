@@ -1,11 +1,8 @@
 const express = require("express");
 const app = express();
-
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 const port = process.env.PORT || 5000;
-
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-
 require("dotenv").config();
 
 // middleware
@@ -16,7 +13,7 @@ app.get("/", (req, res) => {
   res.send("Health coatch server is running");
 });
 
-const uri = process.env.DB_URL;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.xovey.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -119,6 +116,10 @@ app.get("/reviews", async (req, res) => {
     if (req.query.email) {
       query = {
         email: req.query.email,
+      };
+    } else {
+      query = {
+        service_id: req.query.service_id,
       };
     }
     const cursor = Review.find(query);
